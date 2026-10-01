@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oak Bench</title>
+<meta name="description" content="A garden bench, from sketch to seat">
+<script>document.documentElement.classList.add('js');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #FFFFFF; --ink: #141414; --muted: #5E656C; --soft: #F2F2F2;
+  --line: #D3B59F; --line-ink: #837063; --dark: #13315C; --accent: #2F55A4;
+  --sans: 'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; --lw: 3px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans);
+  font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+img { display: block; max-width: 100%; }
+a { color: var(--accent); }
+em { color: var(--muted); }
+
+.topbar { position: sticky; top: 0; z-index: 20; background: #fff; border-top: 4px solid var(--accent);
+  box-shadow: 0 5px 7px -5px #999; }
+.topbar-in { max-width: 1280px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; gap: 24px; }
+.brand { flex: 1; min-width: 0; font-weight: 700; font-size: 15px; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--dark); text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar nav { display: flex; gap: 22px; font-size: 14px; font-weight: 600; }
+.topbar nav a { color: var(--ink); text-decoration: none; padding: 6px 0; border-bottom: 2px solid transparent; white-space: nowrap; }
+.topbar nav a:hover { color: var(--accent); border-color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.hero { position: relative; min-height: min(82vh, 800px); display: flex; background: var(--soft); }
+.hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hero-box { position: relative; margin-left: 70px; width: min(580px, calc(50% - 70px)); padding: 56px 46px;
+  background: rgba(255, 255, 255, .86); display: flex; flex-direction: column; justify-content: center; }
+.kicker { margin: 0 0 16px; font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--line-ink); }
+.hero h1 { margin: 0; font-size: clamp(30px, 3.4vw, 46px); line-height: 1.08; font-weight: 700;
+  text-transform: uppercase; color: var(--dark); overflow-wrap: break-word; }
+.hero .rule { display: block; width: 64px; height: var(--lw); background: var(--line); margin: 26px 0 22px; }
+.lead { margin: 0; font-size: 21px; line-height: 1.45; font-weight: 300; }
+.hero .intro { margin-top: 18px; font-size: 16px; }
+.byline { margin: 22px 0 0; font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
+.section-title { margin: 88px 16px 20px; text-align: center; font-size: 24px; font-weight: 700;
+  letter-spacing: .05em; text-transform: uppercase; color: var(--dark); }
+.tl-start { width: 0; height: 0; margin: 0 auto; border-left: 14px solid transparent; border-right: 14px solid transparent;
+  border-top: 18px solid var(--line); }
+.tl-end { width: 30px; height: var(--lw); margin: 0 auto 96px; background: var(--line); }
+.tl { position: relative; max-width: 1240px; margin: 0 auto; padding: 44px 24px 8px; list-style: none; }
+.tl::before { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; margin-left: -1.5px; border-left: 3px dotted var(--line); }
+.tl-item { position: relative; width: 50%; margin-bottom: 48px; }
+.tl-item.left { margin-right: 50%; padding-left: 100px; }
+.tl-item.right { margin-left: 50%; padding-right: 100px; }
+.tl-item.img.left { padding-left: 0; }
+.tl-item.img.right { padding-right: 0; }
+.tl-circle { position: absolute; top: -11px; width: 25px; height: 25px; border-radius: 50%; background: #fff;
+  border: 3px solid var(--line); z-index: 1; }
+.left .tl-circle { right: -12.5px; }
+.right .tl-circle { left: -12.5px; }
+.img .tl-circle { background: var(--line); }
+
+.tl-card { position: relative; border-top: var(--lw) solid var(--line); padding: 14px 22px 4px; }
+.left .tl-card { border-left: var(--lw) solid var(--line); }
+.right .tl-card { border-right: var(--lw) solid var(--line); text-align: right; }
+.tl-num { position: absolute; top: calc(-1 * var(--lw)); width: 84px; padding: 13px 0; background: var(--line);
+  color: #fff; font-size: 30px; line-height: 1; text-align: center; }
+.left .tl-num { right: calc(100% + 10px); }
+.right .tl-num { left: calc(100% + 10px); }
+.tl-meta { margin: 0 0 4px; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--line-ink); }
+.tl-meta .phase { color: var(--c); }
+.tl-title { margin: 0 0 10px; font-size: 23px; line-height: 1.2; font-weight: 700; color: var(--line-ink); }
+.tl-body p { margin: 0 0 .8em; }
+
+.tl-fig { margin: 0; width: fit-content; max-width: 100%; border-top: var(--lw) solid var(--line); }
+.left .tl-fig { margin-left: auto; padding-right: 80px; border-left: var(--lw) solid var(--line); }
+.right .tl-fig { margin-right: auto; padding-left: 80px; border-right: var(--lw) solid var(--line); }
+.gal { display: block; position: relative; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; }
+.gal img { transition: opacity .2s ease; }
+.gal:hover img { opacity: .88; }
+.gal:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.gal-main img { max-height: 380px; width: auto; }
+.thumbs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 6px; }
+.thumbs img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.gal[data-more]::after { content: attr(data-more); position: absolute; inset: 0; display: flex; align-items: center;
+  justify-content: center; background: rgba(19, 49, 92, .62); color: #fff; font-size: 22px; font-weight: 700; }
+
+/* gallery pop-up */
+.lb { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0;
+  background: #fff; color: var(--ink); }
+.lb[open] { display: grid; grid-template-rows: auto minmax(0, 1fr) auto auto; }
+.lb::backdrop { background: rgba(20, 20, 20, .6); }
+.lb-top { display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-top: 4px solid var(--accent);
+  box-shadow: 0 5px 7px -5px #999; }
+.lb-count { background: var(--line); color: #fff; font-size: 18px; line-height: 1; padding: 8px 12px; white-space: nowrap; }
+.lb-title { flex: 1; min-width: 0; margin: 0; font-weight: 700; font-size: 17px; text-transform: uppercase;
+  letter-spacing: .04em; color: var(--dark); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lb button { font: inherit; cursor: pointer; }
+.lb-close { border: 2px solid var(--dark); background: #fff; color: var(--dark); font-weight: 600; font-size: 14px; padding: 6px 14px; }
+.lb-close:hover { background: var(--dark); color: #fff; }
+.lb-stage { position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; padding: 24px 76px; }
+.lb-frame { max-width: 100%; max-height: 100%; min-height: 0;
+  border-top: var(--lw) solid var(--line); border-left: var(--lw) solid var(--line); }
+.lb-img { max-width: 100%; max-height: calc(100dvh - 300px); width: auto; height: auto; }
+.lb-prev, .lb-next { position: absolute; top: 50%; width: 52px; height: 52px; margin-top: -26px; border-radius: 50%;
+  border: 3px solid var(--line); background: #fff; color: var(--dark); font-size: 28px; line-height: 1; }
+.lb-prev { left: 14px; }
+.lb-next { right: 14px; }
+.lb-prev:hover, .lb-next:hover { background: var(--line); color: #fff; }
+.lb button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.lb-cap { justify-self: center; max-width: min(760px, calc(100% - 32px)); margin: 0 0 14px; padding: 12px 20px;
+  border: var(--lw) solid var(--dark); color: var(--dark); font-size: 15px; }
+.lb-cap[hidden] { display: none; }
+.lb-strip { display: flex; gap: 6px; justify-content: center; padding: 0 16px 18px; overflow-x: auto; }
+.lb-strip button { flex: none; padding: 0; border: 3px solid transparent; background: none; }
+.lb-strip button[aria-current="true"] { border-color: var(--line); }
+.lb-strip img { width: 84px; height: 60px; object-fit: cover; }
+.lb.single .lb-prev, .lb.single .lb-next, .lb.single .lb-strip { display: none; }
+.tl-cap { width: fit-content; max-width: calc(100% - 80px); margin: 0; padding: 18px 24px; font-size: 15px; line-height: 1.5;
+  color: var(--dark); background: #fff; border: var(--lw) solid var(--dark); }
+.left .tl-cap { margin-left: auto; margin-right: 80px; }
+.right .tl-cap { margin-left: 80px; }
+
+.closing { max-width: 1120px; margin: 0 auto 96px; padding: 0 24px; display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 48px; align-items: end; }
+.closing.no-img { grid-template-columns: minmax(0, 760px); justify-content: center; }
+.closing-fig { margin: 0; border-top: var(--lw) solid var(--line); border-left: var(--lw) solid var(--line); }
+.closing-fig img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.closing-box { background: var(--dark); color: #fff; padding: 40px 44px; font-size: 16px; }
+.closing-box h2 { margin: 0 0 18px; font-size: 24px; letter-spacing: .04em; text-transform: uppercase; }
+.closing-box p:last-child { margin-bottom: 0; }
+.closing-box em { color: #D9E0E8; }
+.closing-box a { color: #fff; }
+
+.site-foot { background: var(--soft); padding: 28px 24px; text-align: center; font-size: 13px; color: var(--muted); }
+
+.js .tl-item { opacity: 0; transform: translateY(60px); }
+.js .tl-item.on { opacity: 1; transform: none; transition: opacity .75s ease, transform .75s ease; }
+@media (prefers-reduced-motion: reduce) {
+  .js .tl-item { opacity: 1; transform: none; transition: none; }
+  html { scroll-behavior: auto; }
+}
+
+@media (max-width: 900px) {
+  .topbar-in { padding: 0 16px; gap: 14px; }
+  .topbar nav { gap: 14px; font-size: 13px; }
+  .hero { display: block; min-height: 0; }
+  .hero-img { position: static; height: 58vw; max-height: 420px; }
+  .hero-box { width: auto; margin: 0; padding: 32px 16px 8px; background: #fff; }
+  .section-title { margin-top: 56px; }
+  .tl { padding: 36px 16px 8px; }
+  .tl::before { left: 26px; }
+  .tl-item, .tl-item.left, .tl-item.right, .tl-item.img.left, .tl-item.img.right {
+    width: 100%; margin: 0 0 40px; padding: 0 0 0 40px; }
+  .left .tl-circle, .right .tl-circle { left: -2.5px; right: auto; }
+  .left .tl-card, .right .tl-card { border-left: var(--lw) solid var(--line); border-right: 0; text-align: left; padding: 14px 16px 4px; }
+  .tl-num { position: static; display: inline-block; width: auto; padding: 8px 12px; margin-bottom: 10px; font-size: 22px; }
+  .tl-title { font-size: 20px; }
+  .left .tl-fig, .right .tl-fig { width: auto; margin: 0; padding: 0; border-left: var(--lw) solid var(--line); border-right: 0; }
+  .gal-main img { width: 100%; max-height: none; }
+  .lb-stage { padding: 12px 8px; }
+  .lb-img { max-height: calc(100dvh - 240px); }
+  .lb-prev, .lb-next { width: 42px; height: 42px; margin-top: -21px; font-size: 22px; }
+  .lb-prev { left: 6px; }
+  .lb-next { right: 6px; }
+  .lb-strip { justify-content: flex-start; }
+  .lb-strip img { width: 64px; height: 46px; }
+  .left .tl-cap, .right .tl-cap { width: auto; max-width: none; margin: 0; padding: 14px 16px; }
+  .closing, .closing.no-img { grid-template-columns: minmax(0, 1fr); gap: 24px; padding: 0 16px; margin-bottom: 64px; }
+  .closing-box { padding: 28px 22px; }
+}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+  <a class="brand" href="#top">Oak Bench</a>
+  <nav><a href="#pot">The journey</a><a href="preview.html">The book</a></nav>
+</div></header>
+<main id="top">
+  <section class="hero">
+    <img class="hero-img" src="_img/79a89e02b779.jpg" alt="">
+    <div class="hero-box">
+      <p class="kicker">12 Jan 2025 to 1 Jun 2025</p>
+      <h1>Oak Bench</h1>
+      <span class="rule"></span>
+      <p class="lead">A garden bench, from sketch to seat</p>
+      
+      <p class="byline">Your Name</p>
+    </div>
+  </section>
+  <h2 class="section-title" id="pot">The journey</h2>
+  <div class="tl-start"></div>
+  <ol class="tl">
+    <li class="tl-item text left" style="--c:#13315C">
+      <span class="tl-circle"></span>
+      <div class="tl-card">
+        <span class="tl-num">01</span>
+        <p class="tl-meta">12 Jan 2025 · <span class="phase">Idea</span></p>
+        <h3 class="tl-title">The idea</h3>
+        <div class="tl-body"><p>It started with an empty corner of the garden and a fallen oak.</p>
+<p>The goal: a bench that seats three and lasts twenty years.</p></div>
+      </div>
+    </li>
+    <li class="tl-item img right">
+      <span class="tl-circle"></span>
+      <figure class="tl-fig"><button type="button" class="gal gal-main" data-g="p1" data-i="0" aria-label="Open gallery: The idea (1 photos)"><img src="_img/4c57617f1410.jpg" alt="The idea" loading="lazy"></button></figure>
+      
+    </li>
+    <li class="tl-item text left" style="--c:#9A6B4F">
+      <span class="tl-circle"></span>
+      <div class="tl-card">
+        <span class="tl-num">02</span>
+        <p class="tl-meta">26 Jan 2025 · <span class="phase">Design</span></p>
+        <h3 class="tl-title">First sketches</h3>
+        <div class="tl-body"><p>Three directions: a slab bench, a slatted bench and a curved one.</p></div>
+      </div>
+    </li>
+    <li class="tl-item img right">
+      <span class="tl-circle"></span>
+      <figure class="tl-fig"><button type="button" class="gal gal-main" data-g="p2" data-i="0" aria-label="Open gallery: First sketches (3 photos)"><img src="_img/1faf9d2a7ffa.jpg" alt="First sketches" loading="lazy"></button><div class="thumbs"><button type="button" class="gal" data-g="p2" data-i="1" aria-label="Open gallery: First sketches (3 photos)"><img src="_img/4c77fd75d622.jpg" alt="" loading="lazy"></button><button type="button" class="gal" data-g="p2" data-i="2" aria-label="Open gallery: First sketches (3 photos)"><img src="_img/c33bdd4eca1e.jpg" alt="" loading="lazy"></button></div></figure>
+      <p class="tl-cap">Pencil sketches, versions 1 to 3</p>
+    </li>
+    <li class="tl-item text left" style="--c:#3F6470">
+      <span class="tl-circle"></span>
+      <div class="tl-card">
+        <span class="tl-num">03</span>
+        <p class="tl-meta">20 Feb 2025 · <span class="phase">Prototype</span></p>
+        <h3 class="tl-title">Cardboard model</h3>
+        <div class="tl-body"><p>A 1:5 model showed the curved version was too hard to build.</p></div>
+      </div>
+    </li>
+    <li class="tl-item img right">
+      <span class="tl-circle"></span>
+      <figure class="tl-fig"><button type="button" class="gal gal-main" data-g="p3" data-i="0" aria-label="Open gallery: Cardboard model (2 photos)"><img src="_img/94a2cc891f08.jpg" alt="Cardboard model" loading="lazy"></button><div class="thumbs"><button type="button" class="gal" data-g="p3" data-i="1" aria-label="Open gallery: Cardboard model (2 photos)"><img src="_img/e382582b2242.jpg" alt="" loading="lazy"></button></div></figure>
+      
+    </li>
+    <li class="tl-item text left" style="--c:#9A6B4F">
+      <span class="tl-circle"></span>
+      <div class="tl-card">
+        <span class="tl-num">04</span>
+        <p class="tl-meta">8 Mar 2025 · <span class="phase">Design</span></p>
+        <h3 class="tl-title">Choosing the wood</h3>
+        <div class="tl-body"><p>Oak was dried for six weeks. Moisture target: under 12 %.</p>
+<ul>
+<li>Seat: 40 mm oak planks</li>
+<li>Legs: 70 x 70 mm</li>
+<li>Finish: hard wax oil</li>
+</ul></div>
+      </div>
+    </li>
+    <li class="tl-item text right" style="--c:#B7832F">
+      <span class="tl-circle"></span>
+      <div class="tl-card">
+        <span class="tl-num">05</span>
+        <p class="tl-meta">15 Apr 2025 · <span class="phase">Build</span></p>
+        <h3 class="tl-title">Joinery</h3>
+        <div class="tl-body"><p>Mortise-and-tenon joints, no metal fixings.</p></div>
+      </div>
+    </li>
+    <li class="tl-item img left">
+      <span class="tl-circle"></span>
+      <figure class="tl-fig"><button type="button" class="gal gal-main" data-g="p5" data-i="0" aria-label="Open gallery: Joinery (4 photos)"><img src="_img/e13732701840.jpg" alt="Joinery" loading="lazy"></button><div class="thumbs"><button type="button" class="gal" data-g="p5" data-i="1" aria-label="Open gallery: Joinery (4 photos)"><img src="_img/0bfa2589c749.jpg" alt="" loading="lazy"></button><button type="button" class="gal" data-g="p5" data-i="2" aria-label="Open gallery: Joinery (4 photos)"><img src="_img/ba8d48e14b80.jpg" alt="" loading="lazy"></button><button type="button" class="gal" data-g="p5" data-i="3" aria-label="Open gallery: Joinery (4 photos)"><img src="_img/15a62541e762.jpg" alt="" loading="lazy"></button></div></figure>
+      
+    </li>
+    <li class="tl-item text right" style="--c:#5F6B3A">
+      <span class="tl-circle"></span>
+      <div class="tl-card">
+        <span class="tl-num">06</span>
+        <p class="tl-meta">1 Jun 2025 · <span class="phase">Finish</span></p>
+        <h3 class="tl-title">In the garden</h3>
+        
+      </div>
+    </li>
+    <li class="tl-item img left">
+      <span class="tl-circle"></span>
+      <figure class="tl-fig"><button type="button" class="gal gal-main" data-g="p6" data-i="0" aria-label="Open gallery: In the garden (1 photos)"><img src="_img/ef1635a3c746.jpg" alt="In the garden" loading="lazy"></button></figure>
+      <p class="tl-cap">First summer evening on the bench</p>
+    </li>
+  </ol>
+  <div class="tl-end"></div>
+  
+  <section class="closing ">
+    <figure class="closing-fig"><img src="_img/dc8e9120f308.jpg" alt="" loading="lazy"></figure>
+    <div class="closing-box">
+      <h2>Thank you</h2>
+      <p>To everyone who helped carry the log.</p>
+<p>Photos and text by Your Name, 2025.</p>
+    </div>
+  </section>
+</main>
+<footer class="site-foot">Oak Bench · 12 Jan 2025 to 1 Jun 2025 · Your Name</footer>
+<script type="application/json" id="gallery-data">{"p1": {"title": "01 · The idea", "caption": "", "images": ["_img/4c57617f1410.jpg"]}, "p2": {"title": "02 · First sketches", "caption": "Pencil sketches, versions 1 to 3", "images": ["_img/1faf9d2a7ffa.jpg", "_img/4c77fd75d622.jpg", "_img/c33bdd4eca1e.jpg"]}, "p3": {"title": "03 · Cardboard model", "caption": "", "images": ["_img/94a2cc891f08.jpg", "_img/e382582b2242.jpg"]}, "p5": {"title": "05 · Joinery", "caption": "", "images": ["_img/e13732701840.jpg", "_img/0bfa2589c749.jpg", "_img/ba8d48e14b80.jpg", "_img/15a62541e762.jpg"]}, "p6": {"title": "06 · In the garden", "caption": "First summer evening on the bench", "images": ["_img/ef1635a3c746.jpg"]}}</script>
+
+<dialog class="lb" aria-labelledby="lb-title">
+  <div class="lb-top">
+    <span class="lb-count"></span>
+    <p class="lb-title" id="lb-title"></p>
+    <button type="button" class="lb-close">Close</button>
+  </div>
+  <div class="lb-stage">
+    <button type="button" class="lb-prev" aria-label="Previous photo">&#8249;</button>
+    <div class="lb-frame"><img class="lb-img" alt=""></div>
+    <button type="button" class="lb-next" aria-label="Next photo">&#8250;</button>
+  </div>
+  <p class="lb-cap"></p>
+  <div class="lb-strip"></div>
+</dialog>
+<script>
+(function(){
+  var dlg = document.querySelector('.lb'), src = document.getElementById('gallery-data');
+  if (!dlg || !src || !dlg.showModal) return;
+  var data = JSON.parse(src.textContent), g = null, i = 0, opener = null, x0 = null;
+  var img = dlg.querySelector('.lb-img'), count = dlg.querySelector('.lb-count'),
+      title = dlg.querySelector('.lb-title'), cap = dlg.querySelector('.lb-cap'), strip = dlg.querySelector('.lb-strip');
+  function show(k) {
+    var n = g.images.length;
+    i = (k + n) % n;
+    img.src = g.images[i];
+    img.alt = g.title + ' (' + (i + 1) + '/' + n + ')';
+    count.textContent = (i + 1) + ' / ' + n;
+    strip.querySelectorAll('button').forEach(function(b, j){ b.setAttribute('aria-current', j === i ? 'true' : 'false'); });
+    var cur = strip.children[i]; if (cur) cur.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }
+  function open(key, k, from) {
+    g = data[key]; if (!g) return;
+    opener = from;
+    title.textContent = g.title;
+    cap.textContent = g.caption || ''; cap.hidden = !g.caption;
+    dlg.classList.toggle('single', g.images.length < 2);
+    strip.innerHTML = '';
+    g.images.forEach(function(u, j){
+      var b = document.createElement('button'); b.type = 'button';
+      b.setAttribute('aria-label', (j + 1) + ' / ' + g.images.length);
+      var t = document.createElement('img'); t.src = u; t.alt = ''; b.appendChild(t);
+      b.addEventListener('click', function(){ show(j); });
+      strip.appendChild(b);
+    });
+    dlg.showModal();
+    show(k);
+  }
+  document.addEventListener('click', function(e){
+    var b = e.target.closest('[data-g]');
+    if (b) open(b.getAttribute('data-g'), +b.getAttribute('data-i') || 0, b);
+  });
+  dlg.querySelector('.lb-prev').addEventListener('click', function(){ show(i - 1); });
+  dlg.querySelector('.lb-next').addEventListener('click', function(){ show(i + 1); });
+  dlg.querySelector('.lb-close').addEventListener('click', function(){ dlg.close(); });
+  dlg.addEventListener('click', function(e){ if (e.target === dlg) dlg.close(); });
+  dlg.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowLeft') { show(i - 1); e.preventDefault(); }
+    if (e.key === 'ArrowRight') { show(i + 1); e.preventDefault(); }
+  });
+  dlg.addEventListener('close', function(){ img.removeAttribute('src'); if (opener) opener.focus(); });
+  var stage = dlg.querySelector('.lb-stage');
+  stage.addEventListener('touchstart', function(e){ x0 = e.touches[0].clientX; }, { passive: true });
+  stage.addEventListener('touchend', function(e){
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if (Math.abs(dx) > 50) show(i + (dx < 0 ? 1 : -1));
+  });
+})();
+</script>
+
+<script>
+(function(){
+  var items = document.querySelectorAll('.tl-item');
+  function show(e){ e.classList.add('on'); }
+  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    items.forEach(show); return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if (en.isIntersecting) { show(en.target); io.unobserve(en.target); } });
+  }, { rootMargin: '0px 0px -8% 0px' });
+  items.forEach(function(e){ io.observe(e); });
+})();
+</script>
+<script>
+(function(){ let v=null; setInterval(async()=>{ try{
+  const r=await fetch('_version.txt?'+Date.now()); const t=await r.text();
+  if(v!==null && t!==v) location.reload(); v=t; }catch(e){} }, 1000); })();
+</script>
+</body>
+</html>

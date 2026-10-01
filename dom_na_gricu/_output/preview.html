@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="sl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Več kot vaški dom</title>
+<link href="fonts/fonts.css" rel="stylesheet">
+<style>
+@page { size: 297mm 210mm; margin: 0; }
+:root {
+  --w: 297mm; --h: 210mm;
+  --paper: #FFFFFF; --ink: #141414; --muted: #5E656C; --soft: #F2F2F2;
+  --line: #D3B59F; --line-ink: #837063; --dark: #13315C; --accent: #913F2D;
+  --sans: 'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --pad: 14mm; --lw: 0.8mm;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body { font-family: var(--sans); color: var(--ink); background: var(--paper);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+.sheet { width: var(--w); height: var(--h); position: relative; overflow: hidden;
+  background: var(--paper); page-break-after: always; break-after: page; }
+.sheet:last-child { page-break-after: auto; break-after: auto; }
+figure { margin: 0; overflow: hidden; background: var(--soft); }
+figure img { width: 100%; height: 100%; object-fit: cover; display: block; }
+h1, h2 { font-weight: 700; margin: 0; }
+p { margin: 0 0 0.7em; }
+em { color: var(--muted); }
+
+/* ---------- cover: photo with a translucent white band on the left */
+.cover .cover-img { position: absolute; inset: 0; }
+.cover-text { position: absolute; top: 0; bottom: 0; left: 18mm; width: 44%;
+  padding: 0 11mm; display: flex; flex-direction: column; justify-content: center; }
+.cover.has-img .cover-text { background: rgba(255, 255, 255, 0.86); }
+.cover.no-img .cover-text { border-left: var(--lw) solid var(--line); left: 24mm; width: 60%; }
+.cover .kicker { font-size: 8pt; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--line-ink); margin-bottom: 5mm; }
+.cover h1 { font-size: 28pt; line-height: 1.08; text-transform: uppercase; color: var(--dark); letter-spacing: 0.005em; }
+.cover .rule { display: block; width: 18mm; height: var(--lw); background: var(--line); margin: 7mm 0 6mm; }
+.cover .subtitle { font-size: 13pt; line-height: 1.4; font-weight: 300; margin: 0; }
+.cover .intro { font-size: 9.5pt; line-height: 1.55; margin-top: 5mm; }
+.cover .byline { font-size: 8pt; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); margin: 7mm 0 0; }
+
+/* ---------- overview: vertical milestones with a dotted centre line */
+.overview h2 { position: absolute; top: var(--pad); left: 0; right: 0; text-align: center; font-size: 15pt;
+  text-transform: uppercase; letter-spacing: 0.05em; color: var(--dark); }
+.ov-start { position: absolute; top: 27mm; left: 50%; margin-left: -2.4mm; width: 0; height: 0;
+  border-left: 2.4mm solid transparent; border-right: 2.4mm solid transparent; border-top: 3mm solid var(--line); }
+.ov-tl { position: absolute; top: 38mm; bottom: 20mm; left: var(--pad); right: var(--pad);
+  list-style: none; margin: 0; padding: 0; }
+.ov-tl::before { content: ""; position: absolute; left: 50%; top: -7mm; bottom: -8mm; margin-left: -0.35mm;
+  border-left: 0.7mm dotted var(--line); }
+.ov-item { position: absolute; width: calc(50% - 20mm); }
+.ov-item.left { right: 50%; }
+.ov-item.right { left: 50%; }
+.ov-circle { position: absolute; top: -1.8mm; width: 4.4mm; height: 4.4mm; margin-top: 0.1mm; border-radius: 50%;
+  background: var(--paper); border: 0.7mm solid var(--line); z-index: 1; }
+.left .ov-circle { right: -2.2mm; }
+.right .ov-circle { left: -2.2mm; }
+.ov-card { position: relative; border-top: var(--lw) solid var(--line); padding: 2mm 4mm 0.5mm; }
+.left .ov-card { border-left: var(--lw) solid var(--line); }
+.right .ov-card { border-right: var(--lw) solid var(--line); text-align: right; }
+.ov-num { position: absolute; top: calc(-1 * var(--lw)); width: 14mm; padding: 1.8mm 0; background: var(--line);
+  color: #fff; font-size: 13pt; line-height: 1; text-align: center; }
+.left .ov-num { right: calc(100% + 2.5mm); }
+.right .ov-num { left: calc(100% + 2.5mm); }
+.ov-meta { font-size: 6.8pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--line-ink); margin: 0 0 0.8mm; min-height: 2.4mm; }
+.ov-meta .phase { color: var(--c); }
+.ov-title { font-size: 10.5pt; font-weight: 600; line-height: 1.2; margin: 0; }
+
+/* ---------- content pages */
+.page .content { position: absolute; top: var(--pad); left: var(--pad); right: var(--pad);
+  bottom: 24mm; display: grid; grid-template-columns: 1.55fr 1fr; gap: 9mm; }
+.page-head { position: relative; padding-left: 18mm; min-height: 12mm; margin-bottom: 6mm; }
+.page-head .num { position: absolute; left: 0; top: 0; width: 14mm; padding: 2mm 0; background: var(--line);
+  color: #fff; font-size: 14pt; line-height: 1; text-align: center; }
+.page-head .meta { font-size: 7pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--line-ink); margin: 0.4mm 0 1.2mm; min-height: 2.5mm; }
+.page-head .phase { color: var(--phase); }
+.page-head h2 { font-size: 16pt; line-height: 1.15; color: var(--dark); }
+.body { position: relative; font-size: 9.8pt; line-height: 1.55; font-weight: 400;
+  border-top: var(--lw) solid var(--line); border-left: var(--lw) solid var(--line); padding: 4mm 0 0 5mm; }
+.body::before { content: ""; position: absolute; top: -2.3mm; right: 0; width: 3.8mm; height: 3.8mm;
+  border-radius: 50%; background: var(--paper); border: 0.7mm solid var(--line); }
+.body ul, .body ol { padding-left: 5mm; margin: 0 0 0.7em; }
+.body p:last-child { margin-bottom: 0; }
+.caption { font-size: 8.5pt; line-height: 1.45; color: var(--dark); background: var(--paper);
+  border: var(--lw) solid var(--dark); padding: 2.6mm 3.6mm; margin: 5mm 0 0; }
+.side { overflow: hidden; }
+
+.media { display: grid; gap: 2.5mm; height: 172mm; border-top: var(--lw) solid var(--line);
+  border-left: var(--lw) solid var(--line); }
+.media figure { height: 100%; }
+.media.n1 { grid-template-rows: 171.20mm; }
+.media.n2 { grid-template-rows: 84.35mm 84.35mm; }
+.media.n3 { grid-template-columns: 1fr 1fr; grid-template-rows: 97.85mm 70.85mm; }
+.media.n3 figure:first-child { grid-column: 1 / 3; }
+.media.n4 { grid-template-columns: 1fr 1fr; grid-template-rows: 84.35mm 84.35mm; }
+
+.layout-text .content { grid-template-columns: 1fr; }
+.text-only { max-width: 165mm; }
+.text-only .body { font-size: 11pt; max-width: 150mm; padding-right: 10mm; }
+.text-only .caption { max-width: 150mm; }
+
+.layout-full .content { inset: 0; bottom: 20mm; display: block; }
+.full-img { position: absolute; inset: 0; }
+.full-overlay { position: absolute; left: 18mm; bottom: 0; width: 44%; background: rgba(255, 255, 255, 0.9);
+  padding: 8mm 9mm 7mm; }
+.full-overlay .page-head { margin-bottom: 0; }
+
+/* ---------- time rail: dotted line, a circle per page */
+footer { position: absolute; left: var(--pad); right: var(--pad); bottom: 7mm; height: 10mm;
+  display: flex; align-items: center; gap: 5mm; }
+.rail { flex: 1; display: flex; align-items: center; gap: 3mm; }
+.end-label { font-size: 6.5pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--line-ink); white-space: nowrap; }
+.track { position: relative; flex: 1; height: 0; border-top: 0.6mm dotted var(--line); }
+.fill { position: absolute; left: 0; top: -0.6mm; height: 0.6mm; background: var(--line); }
+.dot { position: absolute; top: -0.3mm; width: 2.4mm; height: 2.4mm; margin: -1.2mm 0 0 -1.2mm;
+  border-radius: 50%; background: var(--paper); border: 0.5mm solid var(--line); }
+.dot.past { background: var(--line); }
+.dot.now { width: 4mm; height: 4mm; margin: -2mm 0 0 -2mm; background: var(--c); border: 0.7mm solid var(--paper);
+  box-shadow: 0 0 0 0.35mm var(--line); }
+.here { position: absolute; bottom: 2.6mm; font-size: 6.5pt; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; white-space: nowrap; color: var(--dark); }
+.here.mid { transform: translateX(-50%); }
+.here.end { transform: translateX(-100%); }
+.folio { font-size: 9pt; font-weight: 700; color: var(--dark); min-width: 6mm; text-align: right; }
+
+/* ---------- back: photo in a bracket, closing text in a navy block */
+.back .back-inner { position: absolute; inset: var(--pad); bottom: 24mm; display: flex; gap: 10mm; align-items: flex-end; }
+.back-img { width: 38%; height: 72%; border-top: var(--lw) solid var(--line); border-left: var(--lw) solid var(--line); }
+.back-text { flex: 1; max-width: 140mm; background: var(--dark); color: #fff; padding: 9mm 11mm 8mm;
+  font-size: 9.5pt; line-height: 1.55; }
+.back-text h2 { font-size: 15pt; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 5mm; }
+.back-text em { color: #D9E0E8; }
+.back-text a { color: #fff; }
+.back-text p:last-child { margin-bottom: 0; }
+
+/* ---------- screen preview only */
+
+@media screen {
+  body { background: #E6E6E6; padding: 72px 0 40px; }
+  .sheet { margin: 0 auto 28px; box-shadow: 0 2px 12px rgba(20, 20, 20, .18); }
+  .toolbar { position: fixed; top: 0; left: 0; right: 0; height: 52px; z-index: 10; display: flex; gap: 16px;
+    align-items: center; padding: 0 24px; background: #fff; color: var(--ink); font-size: 14px;
+    border-top: 4px solid var(--accent); box-shadow: 0 5px 7px -5px #999; }
+  .toolbar strong { text-transform: uppercase; letter-spacing: .04em; color: var(--dark); }
+  .toolbar span { color: var(--muted); }
+  .toolbar a, .toolbar button { font: inherit; font-weight: 600; background: none; color: var(--dark);
+    border: 2px solid var(--dark); padding: 4px 12px; cursor: pointer; text-decoration: none; }
+  .toolbar a:hover, .toolbar button:hover { background: var(--dark); color: #fff; }
+  .toolbar a:focus-visible, .toolbar button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .toolbar .grow { flex: 1; }
+  body.spread .book { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 28px; }
+  body.spread .sheet { margin: 0 0 28px; zoom: .5; }
+}
+@media print { .toolbar { display: none; } }
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <strong>Več kot vaški dom</strong><span>13 strani</span><span class="grow"></span>
+  <a href="index.html">Spletna stran</a>
+  <button type="button" onclick="document.body.classList.toggle('spread')">Pregled strani</button>
+  <button type="button" onclick="window.print()">Natisni / shrani PDF</button>
+</div>
+<main class="book">
+  <section class="sheet cover has-img">
+    <figure class="cover-img"><img src="_img/45574f3dd9ef.jpg" alt=""></figure>
+    <div class="cover-text">
+      <p class="kicker">Grič pri Dobličah · Bela krajina</p>
+      <h1>Več kot vaški dom</h1>
+      <span class="rule"></span>
+      <p class='subtitle'>Kako na Griču pri Dobličah nastaja srce skupnosti</p>
+      
+      <p class='byline'>Vaška skupnost Grič pri Dobličah</p>
+    </div>
+  </section>
+  <section class="sheet overview">
+    <h2>Pot projekta</h2>
+    <span class="ov-start"></span>
+    <ol class="ov-tl">
+      <li class="ov-item left" style="top:0.00%;--c:#7A5C43">
+        <span class="ov-circle"></span>
+        <div class="ov-card">
+          <span class="ov-num">01</span>
+          <p class="ov-meta"><span class="phase">Vas</span></p>
+          <p class="ov-title">Vas na griču</p>
+        </div>
+      </li>
+      <li class="ov-item right" style="top:10.00%;--c:#7A5C43">
+        <span class="ov-circle"></span>
+        <div class="ov-card">
+          <span class="ov-num">02</span>
+          <p class="ov-meta"><span class="phase">Vas</span></p>
+          <p class="ov-title">Zgodbe iz gline</p>
+        </div>
+      </li>
+      <li class="ov-item left" style="top:20.00%;--c:#B7832F">
+        <span class="ov-circle"></span>
+        <div class="ov-card">
+          <span class="ov-num">03</span>
+          <p class="ov-meta"><span class="phase">Ideja</span></p>
+          <p class="ov-title">Ideja: prostor za vse</p>
+        </div>
+      </li>
+      <li class="ov-item right" style="top:30.00%;--c:#3F6470">
+        <span class="ov-circle"></span>
+        <div class="ov-card">
+          <span class="ov-num">04</span>
+          <p class="ov-meta"><span class="phase">Načrtovanje</span></p>
+          <p class="ov-title">Načrti in priprave</p>
+        </div>
+      </li>
+      <li class="ov-item left" style="top:40.00%;--c:#913F2D">
+        <span class="ov-circle"></span>
+        <div class="ov-card">
+          <span class="ov-num">05</span>
+          <p class="ov-meta">2023 · <span class="phase">Gradnja</span></p>
+          <p class="ov-title">Prva lopata</p>
+        </div>
+      </li>
+      <li class="ov-item right" style="top:50.00%;--c:#913F2D">
+        <span class="ov-circle"></span>
+        <div class="ov-card">
+          <span class="ov-num">06</span>
+          <p class="ov-meta">1. 9. 2024 · <span class="phase">Gradnja</span></p>
+          <p class="ov-title">Dom dobiva obliko</p>
+        </div>
+      </li>
+      <li class="ov-item left" style="top:60.00%;--c:#913F2D">
+        <span class="ov-circle"></span>
+        <div class="ov-card">
+          <span class="ov-num">07</span>
+          <p class="ov-meta">2. 9. 2024 · <span class="phase">Gradnja</span></p>
+          <p class="ov-title">Pločnik in avtobusno postajališče</p>
+        </div>
+      </li>
+      <li class="ov-item right" style="top:70.00%;--c:#913F2D">
+        <span class="ov-circle"></span>
+        <div class="ov-card">
+          <span class="ov-num">08</span>
+          <p class="ov-meta"><span class="phase">Gradnja</span></p>
+          <p class="ov-title">Notranjost in oprema</p>
+        </div>
+      </li>
+      <li class="ov-item left" style="top:80.00%;--c:#5F6B3A">
+        <span class="ov-circle"></span>
+        <div class="ov-card">
+          <span class="ov-num">09</span>
+          <p class="ov-meta">datum še ni potrjen · <span class="phase">Odprtje</span></p>
+          <p class="ov-title">Odprtje</p>
+        </div>
+      </li>
+      <li class="ov-item right" style="top:90.00%;--c:#7A5C43">
+        <span class="ov-circle"></span>
+        <div class="ov-card">
+          <span class="ov-num">10</span>
+          <p class="ov-meta"><span class="phase">Skupnost</span></p>
+          <p class="ov-title">Srce skupnosti</p>
+        </div>
+      </li></ol>
+  </section>
+  <section class="sheet page layout-split" style="--phase:#7A5C43">
+    <div class="content">
+      <div class="media n2"><figure class=""><img src="_img/8bc142a11eec.jpg" alt=""></figure><figure class=""><img src="_img/d79471b8073b.jpg" alt=""></figure></div>
+      <div class="side">
+      <header class="page-head">
+        <span class="num">01</span>
+        <p class="meta"><span class="phase">Vas</span></p>
+        <h2>Vas na griču</h2>
+      </header><div class="body"><p>Grič pri Dobličah leži v Beli krajini, jugozahodno od Dobličev, v občini Črnomelj. Je ena od sedmih vasi krajevne skupnosti Dobliče; leta 2020 je v njej živelo 83 prebivalcev.</p>
+<p>Vas ima svoje športno društvo z asfaltnim igriščem in lasten vodovod s hidrantnim omrežjem. Kar vaščani zmorejo sami, naredijo skupaj.</p>
+<p><em>✎ Dopolni: nekaj stavkov o tem, kakšna je vas danes in kdo so njeni ljudje.</em></p></div></div></div>
+    <footer>
+    <div class="rail">
+      <span class="end-label start">Vas</span>
+      <div class="track"><span class="fill" style="width:0.00%"></span><span class="dot now" style="left:0.00%;--c:#7A5C43"></span><span class="dot" style="left:11.11%;--c:#7A5C43"></span><span class="dot" style="left:22.22%;--c:#B7832F"></span><span class="dot" style="left:33.33%;--c:#3F6470"></span><span class="dot" style="left:44.44%;--c:#913F2D"></span><span class="dot" style="left:55.56%;--c:#913F2D"></span><span class="dot" style="left:66.67%;--c:#913F2D"></span><span class="dot" style="left:77.78%;--c:#913F2D"></span><span class="dot" style="left:88.89%;--c:#5F6B3A"></span><span class="dot" style="left:100.00%;--c:#7A5C43"></span><span class="here start" style="left:0.00%">Vas</span></div>
+      <span class="end-label end">Skupnost</span>
+    </div><span class="folio">1</span></footer>
+  </section>
+  <section class="sheet page layout-grid" style="--phase:#7A5C43">
+    <div class="content">
+      <div class="media n3 grid"><figure class=""><img src="_img/8de486af756e.jpg" alt=""></figure><figure class=""><img src="_img/3535a1464faf.jpg" alt=""></figure><figure class=""><img src="_img/56a41d63f53f.jpg" alt=""></figure></div>
+      <div class="side">
+      <header class="page-head">
+        <span class="num">02</span>
+        <p class="meta"><span class="phase">Vas</span></p>
+        <h2>Zgodbe iz gline</h2>
+      </header><div class="body"><p>Prvi pisni zapis o vasi je iz leta 1846: časopis Kmetijske in rokodelske Novice je poročal o požaru, ki je na Griču uničil devet hiš.</p>
+<p>Grič je bil lončarska vas. Etnograf Jože Karlovšek navaja, da se je z lončarstvom do leta 1914 ukvarjalo dvanajst hiš. Leta 1955 je vas dobila današnje ime Grič pri Dobličah.</p>
+<p>Novi dom stoji v vasi, ki ima dolg spomin.</p></div><p class="caption">Star glineni lonec iz vasi</p></div></div>
+    <footer>
+    <div class="rail">
+      <span class="end-label start">Vas</span>
+      <div class="track"><span class="fill" style="width:11.11%"></span><span class="dot past" style="left:0.00%;--c:#7A5C43"></span><span class="dot now" style="left:11.11%;--c:#7A5C43"></span><span class="dot" style="left:22.22%;--c:#B7832F"></span><span class="dot" style="left:33.33%;--c:#3F6470"></span><span class="dot" style="left:44.44%;--c:#913F2D"></span><span class="dot" style="left:55.56%;--c:#913F2D"></span><span class="dot" style="left:66.67%;--c:#913F2D"></span><span class="dot" style="left:77.78%;--c:#913F2D"></span><span class="dot" style="left:88.89%;--c:#5F6B3A"></span><span class="dot" style="left:100.00%;--c:#7A5C43"></span><span class="here start" style="left:11.11%">Vas</span></div>
+      <span class="end-label end">Skupnost</span>
+    </div><span class="folio">2</span></footer>
+  </section>
+  <section class="sheet page layout-split" style="--phase:#B7832F">
+    <div class="content">
+      <div class="media n1"><figure class=""><img src="_img/4d0a6b014d5a.jpg" alt=""></figure></div>
+      <div class="side">
+      <header class="page-head">
+        <span class="num">03</span>
+        <p class="meta"><span class="phase">Ideja</span></p>
+        <h2>Ideja: prostor za vse</h2>
+      </header><div class="body"><p><em>✎ Dopolni: kdaj in kako se je rodila zamisel o vaškem domu. Kdo jo je prvi izrekel? Kje so se vaščani do takrat zbirali?</em></p>
+<p><em>✎ Dopolni: zakaj vas potrebuje skupen prostor: srečanja, društva, praznovanja, mladi in starejši.</em></p></div></div></div>
+    <footer>
+    <div class="rail">
+      <span class="end-label start">Vas</span>
+      <div class="track"><span class="fill" style="width:22.22%"></span><span class="dot past" style="left:0.00%;--c:#7A5C43"></span><span class="dot past" style="left:11.11%;--c:#7A5C43"></span><span class="dot now" style="left:22.22%;--c:#B7832F"></span><span class="dot" style="left:33.33%;--c:#3F6470"></span><span class="dot" style="left:44.44%;--c:#913F2D"></span><span class="dot" style="left:55.56%;--c:#913F2D"></span><span class="dot" style="left:66.67%;--c:#913F2D"></span><span class="dot" style="left:77.78%;--c:#913F2D"></span><span class="dot" style="left:88.89%;--c:#5F6B3A"></span><span class="dot" style="left:100.00%;--c:#7A5C43"></span><span class="here mid" style="left:22.22%">Ideja</span></div>
+      <span class="end-label end">Skupnost</span>
+    </div><span class="folio">3</span></footer>
+  </section>
+  <section class="sheet page layout-text" style="--phase:#3F6470">
+    <div class="content"><div class="text-only">
+      <header class="page-head">
+        <span class="num">04</span>
+        <p class="meta"><span class="phase">Načrtovanje</span></p>
+        <h2>Načrti in priprave</h2>
+      </header><div class="body"><p><em>✎ Dopolni: kdo je pripravil načrte, kako je bil objekt zasnovan, kaj bo v njem (dvorana, kuhinja, sanitarije, prostor za društva ...).</em></p>
+<p><em>✎ Dopolni: kako je bil projekt financiran: občina, krajevna skupnost, razpisi, prispevki vaščanov.</em></p>
+<p><em>✎ Dopolni: ključni datumi: gradbeno dovoljenje, izbira izvajalca.</em></p></div></div></div>
+    <footer>
+    <div class="rail">
+      <span class="end-label start">Vas</span>
+      <div class="track"><span class="fill" style="width:33.33%"></span><span class="dot past" style="left:0.00%;--c:#7A5C43"></span><span class="dot past" style="left:11.11%;--c:#7A5C43"></span><span class="dot past" style="left:22.22%;--c:#B7832F"></span><span class="dot now" style="left:33.33%;--c:#3F6470"></span><span class="dot" style="left:44.44%;--c:#913F2D"></span><span class="dot" style="left:55.56%;--c:#913F2D"></span><span class="dot" style="left:66.67%;--c:#913F2D"></span><span class="dot" style="left:77.78%;--c:#913F2D"></span><span class="dot" style="left:88.89%;--c:#5F6B3A"></span><span class="dot" style="left:100.00%;--c:#7A5C43"></span><span class="here mid" style="left:33.33%">Načrtovanje</span></div>
+      <span class="end-label end">Skupnost</span>
+    </div><span class="folio">4</span></footer>
+  </section>
+  <section class="sheet page layout-split" style="--phase:#913F2D">
+    <div class="content">
+      <div class="media n2"><figure class=""><img src="_img/1041894bbf1d.jpg" alt=""></figure><figure class=""><img src="_img/a0f0f5a3c250.jpg" alt=""></figure></div>
+      <div class="side">
+      <header class="page-head">
+        <span class="num">05</span>
+        <p class="meta">2023 · <span class="phase">Gradnja</span></p>
+        <h2>Prva lopata</h2>
+      </header><div class="body"><p>Gradnja večnamenskega objekta se je začela leta 2023.</p>
+<p><em>✎ Dopolni: točen datum začetka, izvajalec, prvi dnevi na gradbišču, prostovoljno delo vaščanov.</em></p></div></div></div>
+    <footer>
+    <div class="rail">
+      <span class="end-label start">Vas</span>
+      <div class="track"><span class="fill" style="width:44.44%"></span><span class="dot past" style="left:0.00%;--c:#7A5C43"></span><span class="dot past" style="left:11.11%;--c:#7A5C43"></span><span class="dot past" style="left:22.22%;--c:#B7832F"></span><span class="dot past" style="left:33.33%;--c:#3F6470"></span><span class="dot now" style="left:44.44%;--c:#913F2D"></span><span class="dot" style="left:55.56%;--c:#913F2D"></span><span class="dot" style="left:66.67%;--c:#913F2D"></span><span class="dot" style="left:77.78%;--c:#913F2D"></span><span class="dot" style="left:88.89%;--c:#5F6B3A"></span><span class="dot" style="left:100.00%;--c:#7A5C43"></span><span class="here mid" style="left:44.44%">2023 · Gradnja</span></div>
+      <span class="end-label end">Skupnost</span>
+    </div><span class="folio">5</span></footer>
+  </section>
+  <section class="sheet page layout-grid" style="--phase:#913F2D">
+    <div class="content">
+      <div class="media n3 grid"><figure class=""><img src="_img/da2432bdce8f.jpg" alt=""></figure><figure class=""><img src="_img/27de774c440c.jpg" alt=""></figure><figure class=""><img src="_img/b678258aa376.jpg" alt=""></figure></div>
+      <div class="side">
+      <header class="page-head">
+        <span class="num">06</span>
+        <p class="meta">1. 9. 2024 · <span class="phase">Gradnja</span></p>
+        <h2>Dom dobiva obliko</h2>
+      </header><div class="body"><p>Septembra 2024 je objekt že stal. Hkrati se je začelo urejanje celotnega vaškega središča.</p>
+<p><em>✎ Dopolni: kaj je bilo takrat narejenega: konstrukcija, streha, fasada.</em></p></div></div></div>
+    <footer>
+    <div class="rail">
+      <span class="end-label start">Vas</span>
+      <div class="track"><span class="fill" style="width:55.56%"></span><span class="dot past" style="left:0.00%;--c:#7A5C43"></span><span class="dot past" style="left:11.11%;--c:#7A5C43"></span><span class="dot past" style="left:22.22%;--c:#B7832F"></span><span class="dot past" style="left:33.33%;--c:#3F6470"></span><span class="dot past" style="left:44.44%;--c:#913F2D"></span><span class="dot now" style="left:55.56%;--c:#913F2D"></span><span class="dot" style="left:66.67%;--c:#913F2D"></span><span class="dot" style="left:77.78%;--c:#913F2D"></span><span class="dot" style="left:88.89%;--c:#5F6B3A"></span><span class="dot" style="left:100.00%;--c:#7A5C43"></span><span class="here mid" style="left:55.56%">1. 9. 2024 · Gradnja</span></div>
+      <span class="end-label end">Skupnost</span>
+    </div><span class="folio">6</span></footer>
+  </section>
+  <section class="sheet page layout-split" style="--phase:#913F2D">
+    <div class="content">
+      <div class="media n1"><figure class=""><img src="_img/d808abd5dd1c.jpg" alt=""></figure></div>
+      <div class="side">
+      <header class="page-head">
+        <span class="num">07</span>
+        <p class="meta">2. 9. 2024 · <span class="phase">Gradnja</span></p>
+        <h2>Pločnik in avtobusno postajališče</h2>
+      </header><div class="body"><p>Ob domu sta nastala pločnik in novo avtobusno postajališče. Zaradi del je bila cesta skozi vas med 2. in 20. septembrom 2024 delno zaprta.</p>
+<p>Vaško središče tako ni samo stavba, ampak tudi varnejša pot skozi vas.</p></div><p class="caption">Delna zapora ceste med 2. in 20. septembrom 2024</p></div></div>
+    <footer>
+    <div class="rail">
+      <span class="end-label start">Vas</span>
+      <div class="track"><span class="fill" style="width:66.67%"></span><span class="dot past" style="left:0.00%;--c:#7A5C43"></span><span class="dot past" style="left:11.11%;--c:#7A5C43"></span><span class="dot past" style="left:22.22%;--c:#B7832F"></span><span class="dot past" style="left:33.33%;--c:#3F6470"></span><span class="dot past" style="left:44.44%;--c:#913F2D"></span><span class="dot past" style="left:55.56%;--c:#913F2D"></span><span class="dot now" style="left:66.67%;--c:#913F2D"></span><span class="dot" style="left:77.78%;--c:#913F2D"></span><span class="dot" style="left:88.89%;--c:#5F6B3A"></span><span class="dot" style="left:100.00%;--c:#7A5C43"></span><span class="here mid" style="left:66.67%">2. 9. 2024 · Gradnja</span></div>
+      <span class="end-label end">Skupnost</span>
+    </div><span class="folio">7</span></footer>
+  </section>
+  <section class="sheet page layout-grid" style="--phase:#913F2D">
+    <div class="content">
+      <div class="media n4 grid"><figure class=""><img src="_img/5ce3aff1f912.jpg" alt=""></figure><figure class=""><img src="_img/9018cea900eb.jpg" alt=""></figure><figure class=""><img src="_img/dee10a11c15f.jpg" alt=""></figure><figure class=""><img src="_img/fb684533119d.jpg" alt=""></figure></div>
+      <div class="side">
+      <header class="page-head">
+        <span class="num">08</span>
+        <p class="meta"><span class="phase">Gradnja</span></p>
+        <h2>Notranjost in oprema</h2>
+      </header><div class="body"><p><em>✎ Dopolni: zaključna dela, oprema, okolica doma. Kdo je pomagal, koliko prostovoljnih ur so opravili vaščani.</em></p></div></div></div>
+    <footer>
+    <div class="rail">
+      <span class="end-label start">Vas</span>
+      <div class="track"><span class="fill" style="width:77.78%"></span><span class="dot past" style="left:0.00%;--c:#7A5C43"></span><span class="dot past" style="left:11.11%;--c:#7A5C43"></span><span class="dot past" style="left:22.22%;--c:#B7832F"></span><span class="dot past" style="left:33.33%;--c:#3F6470"></span><span class="dot past" style="left:44.44%;--c:#913F2D"></span><span class="dot past" style="left:55.56%;--c:#913F2D"></span><span class="dot past" style="left:66.67%;--c:#913F2D"></span><span class="dot now" style="left:77.78%;--c:#913F2D"></span><span class="dot" style="left:88.89%;--c:#5F6B3A"></span><span class="dot" style="left:100.00%;--c:#7A5C43"></span><span class="here mid" style="left:77.78%">Gradnja</span></div>
+      <span class="end-label end">Skupnost</span>
+    </div><span class="folio">8</span></footer>
+  </section>
+  <section class="sheet page layout-full" style="--phase:#5F6B3A">
+    <div class="content">
+      <figure class="full-img"><img src="_img/b3c40924fc79.jpg" alt=""></figure>
+      <div class="full-overlay">
+      <header class="page-head">
+        <span class="num">09</span>
+        <p class="meta">datum še ni potrjen · <span class="phase">Odprtje</span></p>
+        <h2>Odprtje</h2>
+      </header><p class="caption">✎ Dopolni: datum odprtja in prvi dogodek v domu</p></div></div>
+    <footer>
+    <div class="rail">
+      <span class="end-label start">Vas</span>
+      <div class="track"><span class="fill" style="width:88.89%"></span><span class="dot past" style="left:0.00%;--c:#7A5C43"></span><span class="dot past" style="left:11.11%;--c:#7A5C43"></span><span class="dot past" style="left:22.22%;--c:#B7832F"></span><span class="dot past" style="left:33.33%;--c:#3F6470"></span><span class="dot past" style="left:44.44%;--c:#913F2D"></span><span class="dot past" style="left:55.56%;--c:#913F2D"></span><span class="dot past" style="left:66.67%;--c:#913F2D"></span><span class="dot past" style="left:77.78%;--c:#913F2D"></span><span class="dot now" style="left:88.89%;--c:#5F6B3A"></span><span class="dot" style="left:100.00%;--c:#7A5C43"></span><span class="here end" style="left:88.89%">datum še ni potrjen · Odprtje</span></div>
+      <span class="end-label end">Skupnost</span>
+    </div><span class="folio">9</span></footer>
+  </section>
+  <section class="sheet page layout-grid" style="--phase:#7A5C43">
+    <div class="content">
+      <div class="media n3 grid"><figure class=""><img src="_img/37b7c3a200e4.jpg" alt=""></figure><figure class=""><img src="_img/2845cd25923c.jpg" alt=""></figure><figure class=""><img src="_img/1441f2022331.jpg" alt=""></figure></div>
+      <div class="side">
+      <header class="page-head">
+        <span class="num">10</span>
+        <p class="meta"><span class="phase">Skupnost</span></p>
+        <h2>Srce skupnosti</h2>
+      </header><div class="body"><p>Dom je več kot stavba. Je prostor, kjer se vas sreča.</p>
+<p><em>✎ Dopolni: kaj se v domu dogaja ali bo dogajalo: društva, praznovanja, delavnice, srečanja generacij. Morda tudi razstava o lončarski dediščini vasi?</em></p></div></div></div>
+    <footer>
+    <div class="rail">
+      <span class="end-label start">Vas</span>
+      <div class="track"><span class="fill" style="width:100.00%"></span><span class="dot past" style="left:0.00%;--c:#7A5C43"></span><span class="dot past" style="left:11.11%;--c:#7A5C43"></span><span class="dot past" style="left:22.22%;--c:#B7832F"></span><span class="dot past" style="left:33.33%;--c:#3F6470"></span><span class="dot past" style="left:44.44%;--c:#913F2D"></span><span class="dot past" style="left:55.56%;--c:#913F2D"></span><span class="dot past" style="left:66.67%;--c:#913F2D"></span><span class="dot past" style="left:77.78%;--c:#913F2D"></span><span class="dot past" style="left:88.89%;--c:#5F6B3A"></span><span class="dot now" style="left:100.00%;--c:#7A5C43"></span><span class="here end" style="left:100.00%">Skupnost</span></div>
+      <span class="end-label end">Skupnost</span>
+    </div><span class="folio">10</span></footer>
+  </section>
+  <section class="sheet back">
+    <div class="back-inner">
+      <figure class="back-img"><img src="_img/400d187bbdf6.jpg" alt=""></figure>
+      <div class="back-text">
+        <h2>Hvala</h2>
+        <p>Vsem vaščankam in vaščanom, ki so dom zgradili s svojimi rokami in časom.</p>
+<p><em>✎ Dopolni: zahvala občini, krajevni skupnosti, izvajalcem, donatorjem.</em></p>
+<p><strong>Viri:</strong> Radio Odeon (1. 9. 2024, poročilo o gradnji in zapori ceste); predstavitev vasi Grič pri Dobličah – Zgodbe iz gline; Jože Karlovšek, Lončarstvo na Slovenskem (Slovenski etnograf, 1950–51); Kmetijske in rokodelske Novice, 17. 6. 1846; Wikipedija: Grič pri Dobličah; Občina Črnomelj, KS Dobliče.</p>
+      </div>
+    </div>
+    <footer>
+    <div class="rail">
+      <span class="end-label start">Vas</span>
+      <div class="track"><span class="dot" style="left:0.00%;--c:#7A5C43"></span><span class="dot" style="left:11.11%;--c:#7A5C43"></span><span class="dot" style="left:22.22%;--c:#B7832F"></span><span class="dot" style="left:33.33%;--c:#3F6470"></span><span class="dot" style="left:44.44%;--c:#913F2D"></span><span class="dot" style="left:55.56%;--c:#913F2D"></span><span class="dot" style="left:66.67%;--c:#913F2D"></span><span class="dot" style="left:77.78%;--c:#913F2D"></span><span class="dot" style="left:88.89%;--c:#5F6B3A"></span><span class="dot" style="left:100.00%;--c:#7A5C43"></span></div>
+      <span class="end-label end">Skupnost</span>
+    </div></footer>
+  </section>
+</main>
+</body>
+</html>

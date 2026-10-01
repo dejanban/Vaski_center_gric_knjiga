@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oak Bench</title>
+<link href="fonts/fonts.css" rel="stylesheet">
+<style>
+@page { size: 297mm 210mm; margin: 0; }
+:root {
+  --w: 297mm; --h: 210mm;
+  --paper: #FFFFFF; --ink: #141414; --muted: #5E656C; --soft: #F2F2F2;
+  --line: #D3B59F; --line-ink: #837063; --dark: #13315C; --accent: #2F55A4;
+  --sans: 'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --pad: 14mm; --lw: 0.8mm;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body { font-family: var(--sans); color: var(--ink); background: var(--paper);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+.sheet { width: var(--w); height: var(--h); position: relative; overflow: hidden;
+  background: var(--paper); page-break-after: always; break-after: page; }
+.sheet:last-child { page-break-after: auto; break-after: auto; }
+figure { margin: 0; overflow: hidden; background: var(--soft); }
+figure img { width: 100%; height: 100%; object-fit: cover; display: block; }
+h1, h2 { font-weight: 700; margin: 0; }
+p { margin: 0 0 0.7em; }
+em { color: var(--muted); }
+
+/* ---------- cover: photo with a translucent white band on the left */
+.cover .cover-img { position: absolute; inset: 0; }
+.cover-text { position: absolute; top: 0; bottom: 0; left: 18mm; width: 44%;
+  padding: 0 11mm; display: flex; flex-direction: column; justify-content: center; }
+.cover.has-img .cover-text { background: rgba(255, 255, 255, 0.86); }
+.cover.no-img .cover-text { border-left: var(--lw) solid var(--line); left: 24mm; width: 60%; }
+.cover .kicker { font-size: 8pt; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--line-ink); margin-bottom: 5mm; }
+.cover h1 { font-size: 28pt; line-height: 1.08; text-transform: uppercase; color: var(--dark); letter-spacing: 0.005em; }
+.cover .rule { display: block; width: 18mm; height: var(--lw); background: var(--line); margin: 7mm 0 6mm; }
+.cover .subtitle { font-size: 13pt; line-height: 1.4; font-weight: 300; margin: 0; }
+.cover .intro { font-size: 9.5pt; line-height: 1.55; margin-top: 5mm; }
+.cover .byline { font-size: 8pt; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); margin: 7mm 0 0; }
+
+/* ---------- overview: vertical milestones with a dotted centre line */
+.overview h2 { position: absolute; top: var(--pad); left: 0; right: 0; text-align: center; font-size: 15pt;
+  text-transform: uppercase; letter-spacing: 0.05em; color: var(--dark); }
+.ov-start { position: absolute; top: 27mm; left: 50%; margin-left: -2.4mm; width: 0; height: 0;
+  border-left: 2.4mm solid transparent; border-right: 2.4mm solid transparent; border-top: 3mm solid var(--line); }
+.ov-tl { position: absolute; top: 38mm; bottom: 20mm; left: var(--pad); right: var(--pad);
+  list-style: none; margin: 0; padding: 0; }
+.ov-tl::before { content: ""; position: absolute; left: 50%; top: -7mm; bottom: -8mm; margin-left: -0.35mm;
+  border-left: 0.7mm dotted var(--line); }
+.ov-item { position: absolute; width: calc(50% - 20mm); }
+.ov-item.left { right: 50%; }
+.ov-item.right { left: 50%; }
+.ov-circle { position: absolute; top: -1.8mm; width: 4.4mm; height: 4.4mm; margin-top: 0.1mm; border-radius: 50%;
+  background: var(--paper); border: 0.7mm solid var(--line); z-index: 1; }
+.left .ov-circle { right: -2.2mm; }
+.right .ov-circle { left: -2.2mm; }
+.ov-card { position: relative; border-top: var(--lw) solid var(--line); padding: 2mm 4mm 0.5mm; }
+.left .ov-card { border-left: var(--lw) solid var(--line); }
+.right .ov-card { border-right: var(--lw) solid var(--line); text-align: right; }
+.ov-num { position: absolute; top: calc(-1 * var(--lw)); width: 14mm; padding: 1.8mm 0; background: var(--line);
+  color: #fff; font-size: 13pt; line-height: 1; text-align: center; }
+.left .ov-num { right: calc(100% + 2.5mm); }
+.right .ov-num { left: calc(100% + 2.5mm); }
+.ov-meta { font-size: 6.8pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--line-ink); margin: 0 0 0.8mm; min-height: 2.4mm; }
+.ov-meta .phase { color: var(--c); }
+.ov-title { font-size: 10.5pt; font-weight: 600; line-height: 1.2; margin: 0; }
+
+/* ---------- content pages */
+.page .content { position: absolute; top: var(--pad); left: var(--pad); right: var(--pad);
+  bottom: 24mm; display: grid; grid-template-columns: 1.55fr 1fr; gap: 9mm; }
+.page-head { position: relative; padding-left: 18mm; min-height: 12mm; margin-bottom: 6mm; }
+.page-head .num { position: absolute; left: 0; top: 0; width: 14mm; padding: 2mm 0; background: var(--line);
+  color: #fff; font-size: 14pt; line-height: 1; text-align: center; }
+.page-head .meta { font-size: 7pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--line-ink); margin: 0.4mm 0 1.2mm; min-height: 2.5mm; }
+.page-head .phase { color: var(--phase); }
+.page-head h2 { font-size: 16pt; line-height: 1.15; color: var(--dark); }
+.body { position: relative; font-size: 9.8pt; line-height: 1.55; font-weight: 400;
+  border-top: var(--lw) solid var(--line); border-left: var(--lw) solid var(--line); padding: 4mm 0 0 5mm; }
+.body::before { content: ""; position: absolute; top: -2.3mm; right: 0; width: 3.8mm; height: 3.8mm;
+  border-radius: 50%; background: var(--paper); border: 0.7mm solid var(--line); }
+.body ul, .body ol { padding-left: 5mm; margin: 0 0 0.7em; }
+.body p:last-child { margin-bottom: 0; }
+.caption { font-size: 8.5pt; line-height: 1.45; color: var(--dark); background: var(--paper);
+  border: var(--lw) solid var(--dark); padding: 2.6mm 3.6mm; margin: 5mm 0 0; }
+.side { overflow: hidden; }
+
+.media { display: grid; gap: 2.5mm; height: 172mm; border-top: var(--lw) solid var(--line);
+  border-left: var(--lw) solid var(--line); }
+.media figure { height: 100%; }
+.media.n1 { grid-template-rows: 171.20mm; }
+.media.n2 { grid-template-rows: 84.35mm 84.35mm; }
+.media.n3 { grid-template-columns: 1fr 1fr; grid-template-rows: 97.85mm 70.85mm; }
+.media.n3 figure:first-child { grid-column: 1 / 3; }
+.media.n4 { grid-template-columns: 1fr 1fr; grid-template-rows: 84.35mm 84.35mm; }
+
+.layout-text .content { grid-template-columns: 1fr; }
+.text-only { max-width: 165mm; }
+.text-only .body { font-size: 11pt; max-width: 150mm; padding-right: 10mm; }
+.text-only .caption { max-width: 150mm; }
+
+.layout-full .content { inset: 0; bottom: 20mm; display: block; }
+.full-img { position: absolute; inset: 0; }
+.full-overlay { position: absolute; left: 18mm; bottom: 0; width: 44%; background: rgba(255, 255, 255, 0.9);
+  padding: 8mm 9mm 7mm; }
+.full-overlay .page-head { margin-bottom: 0; }
+
+/* ---------- time rail: dotted line, a circle per page */
+footer { position: absolute; left: var(--pad); right: var(--pad); bottom: 7mm; height: 10mm;
+  display: flex; align-items: center; gap: 5mm; }
+.rail { flex: 1; display: flex; align-items: center; gap: 3mm; }
+.end-label { font-size: 6.5pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--line-ink); white-space: nowrap; }
+.track { position: relative; flex: 1; height: 0; border-top: 0.6mm dotted var(--line); }
+.fill { position: absolute; left: 0; top: -0.6mm; height: 0.6mm; background: var(--line); }
+.dot { position: absolute; top: -0.3mm; width: 2.4mm; height: 2.4mm; margin: -1.2mm 0 0 -1.2mm;
+  border-radius: 50%; background: var(--paper); border: 0.5mm solid var(--line); }
+.dot.past { background: var(--line); }
+.dot.now { width: 4mm; height: 4mm; margin: -2mm 0 0 -2mm; background: var(--c); border: 0.7mm solid var(--paper);
+  box-shadow: 0 0 0 0.35mm var(--line); }
+.here { position: absolute; bottom: 2.6mm; font-size: 6.5pt; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; white-space: nowrap; color: var(--dark); }
+.here.mid { transform: translateX(-50%); }
+.here.end { transform: translateX(-100%); }
+.folio { font-size: 9pt; font-weight: 700; color: var(--dark); min-width: 6mm; text-align: right; }
+
+/* ---------- back: photo in a bracket, closing text in a navy block */
+.back .back-inner { position: absolute; inset: var(--pad); bottom: 24mm; display: flex; gap: 10mm; align-items: flex-end; }
+.back-img { width: 38%; height: 72%; border-top: var(--lw) solid var(--line); border-left: var(--lw) solid var(--line); }
+.back-text { flex: 1; max-width: 140mm; background: var(--dark); color: #fff; padding: 9mm 11mm 8mm;
+  font-size: 9.5pt; line-height: 1.55; }
+.back-text h2 { font-size: 15pt; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 5mm; }
+.back-text em { color: #D9E0E8; }
+.back-text a { color: #fff; }
+.back-text p:last-child { margin-bottom: 0; }
+
+/* ---------- screen preview only */
+
+@media screen {
+  body { background: #E6E6E6; padding: 72px 0 40px; }
+  .sheet { margin: 0 auto 28px; box-shadow: 0 2px 12px rgba(20, 20, 20, .18); }
+  .toolbar { position: fixed; top: 0; left: 0; right: 0; height: 52px; z-index: 10; display: flex; gap: 16px;
+    align-items: center; padding: 0 24px; background: #fff; color: var(--ink); font-size: 14px;
+    border-top: 4px solid var(--accent); box-shadow: 0 5px 7px -5px #999; }
+  .toolbar strong { text-transform: uppercase; letter-spacing: .04em; color: var(--dark); }
+  .toolbar span { color: var(--muted); }
+  .toolbar a, .toolbar button { font: inherit; font-weight: 600; background: none; color: var(--dark);
+    border: 2px solid var(--dark); padding: 4px 12px; cursor: pointer; text-decoration: none; }
+  .toolbar a:hover, .toolbar button:hover { background: var(--dark); color: #fff; }
+  .toolbar a:focus-visible, .toolbar button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .toolbar .grow { flex: 1; }
+  body.spread .book { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 28px; }
+  body.spread .sheet { margin: 0 0 28px; zoom: .5; }
+}
+@media print { .toolbar { display: none; } }
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <strong>Oak Bench</strong><span>9 pages</span><span class="grow"></span>
+  <a href="index.html">Website</a>
+  <button type="button" onclick="document.body.classList.toggle('spread')">Toggle overview</button>
+  <button type="button" onclick="window.print()">Print / save as PDF</button>
+</div>
+<main class="book">
+  <section class="sheet cover has-img">
+    <figure class="cover-img"><img src="_img/0eb3eff7cdeb.jpg" alt=""></figure>
+    <div class="cover-text">
+      <p class="kicker">12 Jan 2025 to 1 Jun 2025</p>
+      <h1>Oak Bench</h1>
+      <span class="rule"></span>
+      <p class='subtitle'>A garden bench, from sketch to seat</p>
+      
+      <p class='byline'>Your Name</p>
+    </div>
+  </section>
+  <section class="sheet overview">
+    <h2>The journey</h2>
+    <span class="ov-start"></span>
+    <ol class="ov-tl">
+      <li class="ov-item left" style="top:0.00%;--c:#13315C">
+        <span class="ov-circle"></span>
+        <div class="ov-card">
+          <span class="ov-num">01</span>
+          <p class="ov-meta">12 Jan 2025 · <span class="phase">Idea</span></p>
+          <p class="ov-title">The idea</p>
+        </div>
+      </li>
+      <li class="ov-item right" style="top:16.67%;--c:#9A6B4F">
+        <span class="ov-circle"></span>
+        <div class="ov-card">
+          <span class="ov-num">02</span>
+          <p class="ov-meta">26 Jan 2025 · <span class="phase">Design</span></p>
+          <p class="ov-title">First sketches</p>
+        </div>
+      </li>
+      <li class="ov-item left" style="top:33.33%;--c:#3F6470">
+        <span class="ov-circle"></span>
+        <div class="ov-card">
+          <span class="ov-num">03</span>
+          <p class="ov-meta">20 Feb 2025 · <span class="phase">Prototype</span></p>
+          <p class="ov-title">Cardboard model</p>
+        </div>
+      </li>
+      <li class="ov-item right" style="top:50.00%;--c:#9A6B4F">
+        <span class="ov-circle"></span>
+        <div class="ov-card">
+          <span class="ov-num">04</span>
+          <p class="ov-meta">8 Mar 2025 · <span class="phase">Design</span></p>
+          <p class="ov-title">Choosing the wood</p>
+        </div>
+      </li>
+      <li class="ov-item left" style="top:66.67%;--c:#B7832F">
+        <span class="ov-circle"></span>
+        <div class="ov-card">
+          <span class="ov-num">05</span>
+          <p class="ov-meta">15 Apr 2025 · <span class="phase">Build</span></p>
+          <p class="ov-title">Joinery</p>
+        </div>
+      </li>
+      <li class="ov-item right" style="top:83.33%;--c:#5F6B3A">
+        <span class="ov-circle"></span>
+        <div class="ov-card">
+          <span class="ov-num">06</span>
+          <p class="ov-meta">1 Jun 2025 · <span class="phase">Finish</span></p>
+          <p class="ov-title">In the garden</p>
+        </div>
+      </li></ol>
+  </section>
+  <section class="sheet page layout-split" style="--phase:#13315C">
+    <div class="content">
+      <div class="media n1"><figure class=""><img src="_img/f4873120ff74.jpg" alt=""></figure></div>
+      <div class="side">
+      <header class="page-head">
+        <span class="num">01</span>
+        <p class="meta">12 Jan 2025 · <span class="phase">Idea</span></p>
+        <h2>The idea</h2>
+      </header><div class="body"><p>It started with an empty corner of the garden and a fallen oak.</p>
+<p>The goal: a bench that seats three and lasts twenty years.</p></div></div></div>
+    <footer>
+    <div class="rail">
+      <span class="end-label start">12 Jan 2025</span>
+      <div class="track"><span class="fill" style="width:0.00%"></span><span class="dot now" style="left:0.00%;--c:#13315C"></span><span class="dot" style="left:10.00%;--c:#9A6B4F"></span><span class="dot" style="left:27.86%;--c:#3F6470"></span><span class="dot" style="left:39.29%;--c:#9A6B4F"></span><span class="dot" style="left:66.43%;--c:#B7832F"></span><span class="dot" style="left:100.00%;--c:#5F6B3A"></span><span class="here start" style="left:0.00%">12 Jan 2025 · Idea</span></div>
+      <span class="end-label end">1 Jun 2025</span>
+    </div><span class="folio">1</span></footer>
+  </section>
+  <section class="sheet page layout-grid" style="--phase:#9A6B4F">
+    <div class="content">
+      <div class="media n3 grid"><figure class=""><img src="_img/624c20e6e5e2.jpg" alt=""></figure><figure class=""><img src="_img/dfc3cd96281c.jpg" alt=""></figure><figure class=""><img src="_img/e829c0b112e0.jpg" alt=""></figure></div>
+      <div class="side">
+      <header class="page-head">
+        <span class="num">02</span>
+        <p class="meta">26 Jan 2025 · <span class="phase">Design</span></p>
+        <h2>First sketches</h2>
+      </header><div class="body"><p>Three directions: a slab bench, a slatted bench and a curved one.</p></div><p class="caption">Pencil sketches, versions 1 to 3</p></div></div>
+    <footer>
+    <div class="rail">
+      <span class="end-label start">12 Jan 2025</span>
+      <div class="track"><span class="fill" style="width:10.00%"></span><span class="dot past" style="left:0.00%;--c:#13315C"></span><span class="dot now" style="left:10.00%;--c:#9A6B4F"></span><span class="dot" style="left:27.86%;--c:#3F6470"></span><span class="dot" style="left:39.29%;--c:#9A6B4F"></span><span class="dot" style="left:66.43%;--c:#B7832F"></span><span class="dot" style="left:100.00%;--c:#5F6B3A"></span><span class="here start" style="left:10.00%">26 Jan 2025 · Design</span></div>
+      <span class="end-label end">1 Jun 2025</span>
+    </div><span class="folio">2</span></footer>
+  </section>
+  <section class="sheet page layout-split" style="--phase:#3F6470">
+    <div class="content">
+      <div class="media n2"><figure class=""><img src="_img/c85b2122e63b.jpg" alt=""></figure><figure class=""><img src="_img/c215b9d51a7e.jpg" alt=""></figure></div>
+      <div class="side">
+      <header class="page-head">
+        <span class="num">03</span>
+        <p class="meta">20 Feb 2025 · <span class="phase">Prototype</span></p>
+        <h2>Cardboard model</h2>
+      </header><div class="body"><p>A 1:5 model showed the curved version was too hard to build.</p></div></div></div>
+    <footer>
+    <div class="rail">
+      <span class="end-label start">12 Jan 2025</span>
+      <div class="track"><span class="fill" style="width:27.86%"></span><span class="dot past" style="left:0.00%;--c:#13315C"></span><span class="dot past" style="left:10.00%;--c:#9A6B4F"></span><span class="dot now" style="left:27.86%;--c:#3F6470"></span><span class="dot" style="left:39.29%;--c:#9A6B4F"></span><span class="dot" style="left:66.43%;--c:#B7832F"></span><span class="dot" style="left:100.00%;--c:#5F6B3A"></span><span class="here mid" style="left:27.86%">20 Feb 2025 · Prototype</span></div>
+      <span class="end-label end">1 Jun 2025</span>
+    </div><span class="folio">3</span></footer>
+  </section>
+  <section class="sheet page layout-text" style="--phase:#9A6B4F">
+    <div class="content"><div class="text-only">
+      <header class="page-head">
+        <span class="num">04</span>
+        <p class="meta">8 Mar 2025 · <span class="phase">Design</span></p>
+        <h2>Choosing the wood</h2>
+      </header><div class="body"><p>Oak was dried for six weeks. Moisture target: under 12 %.</p>
+<ul>
+<li>Seat: 40 mm oak planks</li>
+<li>Legs: 70 x 70 mm</li>
+<li>Finish: hard wax oil</li>
+</ul></div></div></div>
+    <footer>
+    <div class="rail">
+      <span class="end-label start">12 Jan 2025</span>
+      <div class="track"><span class="fill" style="width:39.29%"></span><span class="dot past" style="left:0.00%;--c:#13315C"></span><span class="dot past" style="left:10.00%;--c:#9A6B4F"></span><span class="dot past" style="left:27.86%;--c:#3F6470"></span><span class="dot now" style="left:39.29%;--c:#9A6B4F"></span><span class="dot" style="left:66.43%;--c:#B7832F"></span><span class="dot" style="left:100.00%;--c:#5F6B3A"></span><span class="here mid" style="left:39.29%">8 Mar 2025 · Design</span></div>
+      <span class="end-label end">1 Jun 2025</span>
+    </div><span class="folio">4</span></footer>
+  </section>
+  <section class="sheet page layout-grid" style="--phase:#B7832F">
+    <div class="content">
+      <div class="media n4 grid"><figure class=""><img src="_img/2cec401ebb1c.jpg" alt=""></figure><figure class=""><img src="_img/59efe5732ac1.jpg" alt=""></figure><figure class=""><img src="_img/dba932a801ac.jpg" alt=""></figure><figure class=""><img src="_img/6611f14dd1c2.jpg" alt=""></figure></div>
+      <div class="side">
+      <header class="page-head">
+        <span class="num">05</span>
+        <p class="meta">15 Apr 2025 · <span class="phase">Build</span></p>
+        <h2>Joinery</h2>
+      </header><div class="body"><p>Mortise-and-tenon joints, no metal fixings.</p></div></div></div>
+    <footer>
+    <div class="rail">
+      <span class="end-label start">12 Jan 2025</span>
+      <div class="track"><span class="fill" style="width:66.43%"></span><span class="dot past" style="left:0.00%;--c:#13315C"></span><span class="dot past" style="left:10.00%;--c:#9A6B4F"></span><span class="dot past" style="left:27.86%;--c:#3F6470"></span><span class="dot past" style="left:39.29%;--c:#9A6B4F"></span><span class="dot now" style="left:66.43%;--c:#B7832F"></span><span class="dot" style="left:100.00%;--c:#5F6B3A"></span><span class="here mid" style="left:66.43%">15 Apr 2025 · Build</span></div>
+      <span class="end-label end">1 Jun 2025</span>
+    </div><span class="folio">5</span></footer>
+  </section>
+  <section class="sheet page layout-full" style="--phase:#5F6B3A">
+    <div class="content">
+      <figure class="full-img"><img src="_img/9fee8c12097e.jpg" alt=""></figure>
+      <div class="full-overlay">
+      <header class="page-head">
+        <span class="num">06</span>
+        <p class="meta">1 Jun 2025 · <span class="phase">Finish</span></p>
+        <h2>In the garden</h2>
+      </header><p class="caption">First summer evening on the bench</p></div></div>
+    <footer>
+    <div class="rail">
+      <span class="end-label start">12 Jan 2025</span>
+      <div class="track"><span class="fill" style="width:100.00%"></span><span class="dot past" style="left:0.00%;--c:#13315C"></span><span class="dot past" style="left:10.00%;--c:#9A6B4F"></span><span class="dot past" style="left:27.86%;--c:#3F6470"></span><span class="dot past" style="left:39.29%;--c:#9A6B4F"></span><span class="dot past" style="left:66.43%;--c:#B7832F"></span><span class="dot now" style="left:100.00%;--c:#5F6B3A"></span><span class="here end" style="left:100.00%">1 Jun 2025 · Finish</span></div>
+      <span class="end-label end">1 Jun 2025</span>
+    </div><span class="folio">6</span></footer>
+  </section>
+  <section class="sheet back">
+    <div class="back-inner">
+      <figure class="back-img"><img src="_img/6340632a0f5b.jpg" alt=""></figure>
+      <div class="back-text">
+        <h2>Thank you</h2>
+        <p>To everyone who helped carry the log.</p>
+<p>Photos and text by Your Name, 2025.</p>
+      </div>
+    </div>
+    <footer>
+    <div class="rail">
+      <span class="end-label start">12 Jan 2025</span>
+      <div class="track"><span class="dot" style="left:0.00%;--c:#13315C"></span><span class="dot" style="left:10.00%;--c:#9A6B4F"></span><span class="dot" style="left:27.86%;--c:#3F6470"></span><span class="dot" style="left:39.29%;--c:#9A6B4F"></span><span class="dot" style="left:66.43%;--c:#B7832F"></span><span class="dot" style="left:100.00%;--c:#5F6B3A"></span></div>
+      <span class="end-label end">1 Jun 2025</span>
+    </div></footer>
+  </section>
+</main>
+</body>
+</html>
