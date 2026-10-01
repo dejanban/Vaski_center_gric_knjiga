@@ -1,0 +1,3 @@
+weasyprint>=62
+markdown>=3.4
+Pillow>=10

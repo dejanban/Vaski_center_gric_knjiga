@@ -1,0 +1,56 @@
+# Builds the book + website and publishes <PROJECT>/_output to GitHub Pages.
+# One-time setup on github.com: Settings -> Pages -> Build and deployment -> Source: "GitHub Actions".
+name: Publish website
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:        # "Run workflow" button in the Actions tab
+
+env:
+  PROJECT: dom_na_gricu     # the project folder to publish - change this to switch books
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install Pango (needed by WeasyPrint for the PDF)
+        run: sudo apt-get update && sudo apt-get install -y libpango-1.0-0 libpangoft2-1.0-0 fonts-dejavu-core
+
+      - name: Install Python packages
+        run: pip install -r requirements.txt
+
+      - name: Build PDF, book preview and website
+        run: python bookbuilder.py build "$PROJECT"
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.PROJECT }}/_output
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
