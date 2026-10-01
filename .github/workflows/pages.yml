@@ -8,7 +8,7 @@ on:
   workflow_dispatch:        # "Run workflow" button in the Actions tab
 
 env:
-  PROJECT: dom_na_gricu     # the project folder to publish - change this to switch books
+  PROJECT: my_project      # the project folder to publish - change this to switch books
 
 permissions:
   contents: read
