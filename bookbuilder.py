@@ -389,6 +389,21 @@ FONTS_DIR = Path(__file__).resolve().parent / "fonts"
 FONTS_LINK = '<link href="fonts/fonts.css" rel="stylesheet">'
 
 
+def design_css(book: Book, website: bool = False) -> str:
+    """Optional editor settings, shared by browser, website and print exports."""
+    s = book.settings
+    paper = s.get("paper", "#FFFFFF")
+    if not re.fullmatch(r"#[0-9a-fA-F]{6}", paper):
+        paper = "#FFFFFF"
+    radius = {"square": "0", "rounded": "12px", "pill": "40px"}.get(s.get("image_shape"), "0")
+    dot = {"circle": "50%", "square": "0", "rounded": "25%"}.get(s.get("marker_shape"), "50%")
+    return f"""
+:root {{ --paper: {paper}; }}
+figure, .gal img, .back-img {{ border-radius: {radius}; }}
+.dot, .ov-circle, .tl-circle {{ border-radius: {dot}; }}
+""" + (f".topbar, .tl-circle {{ background: {paper}; }}" if website else "")
+
+
 def copy_fonts(out_dir: Path):
     if not (FONTS_DIR / "fonts.css").exists():
         print(f"  warning: {FONTS_DIR} is missing - falling back to system fonts")
@@ -743,7 +758,7 @@ def build_html(book: Book, out_dir: Path, size_name: str, max_px: int,
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
 {FONTS_LINK}
-<style>{build_css(book, size)}</style>
+<style>{build_css(book, size)}{design_css(book)}</style>
 </head>
 <body>{toolbar}
 <main class="book">{''.join(parts)}
@@ -1105,7 +1120,7 @@ def build_site_html(book: Book, out_dir: Path, max_px: int, pdf_name: str | None
 {f'<meta name="description" content="{html.escape(s["subtitle"])}">' if s.get("subtitle") else ''}
 <script>document.documentElement.classList.add('js');</script>
 {FONTS_LINK}
-<style>{site_css(book)}</style>
+<style>{site_css(book)}{design_css(book, True)}</style>
 </head>
 <body>
 <header class="topbar"><div class="topbar-in">

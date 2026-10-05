@@ -19,7 +19,44 @@ navy headings, navy-framed captions and a navy closing block.
   closing block, links to the book preview and the PDF. Single column on phones.
   Clicking a photo opens a gallery of all photos of that page.
 
-## Install
+## Visual application
+
+Start **Book & Web Studio** from this folder:
+
+```bash
+./launch.sh
+```
+
+The launcher creates a local Python virtual environment, installs missing dependencies
+on the first run (internet required), and opens `http://127.0.0.1:8766` in your browser.
+After setup, the application works locally and offline. On Windows, use
+`python -m venv .venv`, `.venv\Scripts\python -m pip install -r requirements.txt`,
+then `.venv\Scripts\python app.py` instead.
+
+- Select an existing project, create a blank one, or duplicate a project.
+- Edit titles, Markdown stories, dates, phases, captions, and page layouts.
+- Add and reorder content pages; upload photos without overwriting existing files.
+- Choose design presets, colors, paper color, fonts, image corners, timeline marker
+  shapes, language, and book size in the **Design** panel.
+- Changes save automatically after a short pause and rebuild both previews.
+- Switch between book and website previews, with desktop and mobile widths.
+- Export a PDF book or a ZIP containing the standalone website and its assets.
+
+Edits update the existing `page.md` files. Reordering renames numbered folders;
+duplicate a project first if you want to keep an untouched original. Photo order follows
+filenames. The app uses template layouts and shape presets rather than a freeform drawing canvas.
+System fonts such as Georgia depend on the fonts available on the viewing device;
+Inter is bundled. Book pages have fixed dimensions, so review the preview for overflowing text.
+
+For a different workspace or port:
+
+```bash
+./launch.sh --root /path/to/projects --port 8767 --no-open
+```
+
+Run application checks with `.venv/bin/python -m unittest discover -s tests -v`.
+
+## Command-line installation
 
 ```bash
 pip install -r requirements.txt
